@@ -4,6 +4,8 @@ DESCRIPTION:
 
 DOWNLOAD DATA:
 
+Vlada explain how to download MUA data and what is Concept_to_category_linking.csv
+
 CONTENT:
 
 'prepare_MUA_dataset.py' is designed to process multi-unit activity (MUA) data from macaque monkey experiments. It follows these steps:
