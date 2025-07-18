@@ -2,9 +2,13 @@
 
 DESCRIPTION:
 
+Datasets are not attached because they are too big, instead instructions to get the raw data and the preprocessed datasets are provided here.
+
 DOWNLOAD DATA:
 
-Vlada explain how to download MUA data and what is Concept_to_category_linking.csv
+Vlada explain how to download MUA data and Concept_to_category_linking.csv
+
+Download THINGS dataset: https://things-initiative.org/projects/things-images/
 
 CONTENT:
 
