@@ -36,6 +36,7 @@ animal_df = df[
 ].reset_index(drop=True)
 animal_vectors = animal_df.groupby('Class')[electrode_cols].mean()
 animal_labels = animal_vectors.index.values
+
 # RDM per region per animal
 region_animal_vectors = {
     'V1': animal_df.groupby('Class')[V1_electrode_cols].mean(),
