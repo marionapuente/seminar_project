@@ -5,7 +5,7 @@ import numpy as np
 import os
 import re
 
-from config import base_path
+from config import data_base_path
 
 monkeys = {
     "MonkeyN": {"V1": (1, 512), "V4": (513, 768), "IT": (769, 1024)},
@@ -44,7 +44,7 @@ def extract_object_name(stimulus_name):
     return match.group(1) if match else stimulus_name
 
 def load_category_data():
-    filename = os.path.join(base_path, "raw_datasets", "Concept_to_category_linking.csv")
+    filename = os.path.join(data_base_path, "raw_datasets", "Concept_to_category_linking.csv")
     print(f"Loading category data from {filename}...")
     category_df = pd.read_csv(filename)
     category_df["concept"] = category_df["concept"].str.lower().str.strip()
@@ -54,8 +54,8 @@ def load_category_data():
 def process_monkey(monkey, regions, category_df):
     print(f"\nProcessing {monkey}...")
 
-    things_imgs_path = os.path.join(base_path, "raw_datasets", monkey, "things_imgs.mat")
-    norm_mua_path = os.path.join(base_path, "raw_datasets", monkey, "THINGS_normMUA.mat")
+    things_imgs_path = os.path.join(data_base_path, "raw_datasets", monkey, "things_imgs.mat")
+    norm_mua_path = os.path.join(data_base_path, "raw_datasets", monkey, "THINGS_normMUA.mat")
 
     if not os.path.exists(things_imgs_path) or not os.path.exists(norm_mua_path):
         print(f"Error: One or both files for {monkey} are missing.")
@@ -71,7 +71,7 @@ def process_monkey(monkey, regions, category_df):
         train_MUA = f_mua['train_MUA'][()].T
         test_MUA = f_mua['test_MUA'][()].T
 
-    num_electrodes, num_train_stimuli = train_MUA.shape
+    num_electrodes, _ = train_MUA.shape
     combined_data = []
 
     def process_data(paths, classes, mua_data, trial_type):
@@ -127,7 +127,7 @@ def process_monkey(monkey, regions, category_df):
     merged_df = pd.merge(combined_df, category_df[['concept', 'category_label']], left_on='Base_Object', right_on='concept', how='left')
     merged_df = merged_df.drop(columns=['concept', 'Image_File', 'Base_Object'])
 
-    csv_path = os.path.join(base_path, "datasets", f"{monkey}_MUA_responses.csv")
+    csv_path = os.path.join(data_base_path, "datasets", f"{monkey}_MUA_responses.csv")
     merged_df.to_csv(csv_path, index=False)
     print(f"Saved: {csv_path} | Total Rows: {len(merged_df)}")
 
