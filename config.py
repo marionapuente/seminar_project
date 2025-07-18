@@ -15,4 +15,4 @@ excluded_classes = ['alligator', 'ant', 'antelope', 'barnacle', 'bear', 'bird', 
  'rattlesnake', 'rhinoceros', 'sardine', 'scorpion', 'seagull', 'seal', 'sheep', 'skunk', 'slug', 'snake', 'squid', 'starfish',
  'swan', 'tadpole', 'tick', 'toad', 'turkey', 'vulture', 'warthog', 'weasel', 'wolf', 'yak']
 
-pretrained_model = "ViT-B/32"  # Options: "ViT-B/32", 
+pretrained_model = "ViT-B/32"  # Options: "ViT-B/32", "VGG16"
