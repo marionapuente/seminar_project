@@ -4,6 +4,8 @@
 import pandas as pd
 import os
 from scipy.stats import spearmanr
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from config import data_base_path, monkey_id, project_base_path, excluded_classes
 from utils import compute_rdm
@@ -195,7 +197,7 @@ rho42, pval42 = spearmanr(rdm_vector_clip_animal, rdm_vector_IT_animal)
 rho43, pval43 = spearmanr(rdm_vector_vgg_category, rdm_vector_IT_category)
 rho44, pval44 = spearmanr(rdm_vector_vgg_animal, rdm_vector_IT_animal)
 
-# Display table
+# Build table
 correlation_table = pd.DataFrame(
     data=[
         [f"{rho11:.2f}\n(p={pval11:.3f})", f"{rho21:.2f}\n(p={pval21:.3f})", f"{rho31:.2f}\n(p={pval31:.3f})", f"{rho41:.2f}\n(p={pval41:.3f})"],
@@ -206,5 +208,24 @@ correlation_table = pd.DataFrame(
     index=['clip-category', 'clip-animal', 'vgg-category', 'vgg-animal'],
     columns=['MUA brain', 'MUA V1', 'MUA V4', 'MUA IT']
 )
-correlation_table = correlation_table.round(3)
-print(correlation_table)
+
+# Display and save table
+
+correlation_table.to_csv("rdm_spearman_correlation_table.csv")
+
+plt.figure(figsize=(8, 4))
+sns.heatmap(
+    correlation_table.applymap(lambda x: float(x.split('\n')[0])),  # use rho values for color
+    annot=correlation_table,
+    fmt='',
+    cmap='vlag',
+    cbar=True,
+    linewidths=0.5,
+    linecolor='gray',
+    annot_kws={"size": 8}
+)
+plt.title("RDM Spearman Correlation\n(rho + p-values)", fontsize=12)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.savefig("rdm_spearman_heatmap.png", dpi=300)
+plt.show()
