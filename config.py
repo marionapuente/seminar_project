@@ -11,3 +11,5 @@ excluded_classes = [
     'dragonfly', 'earwig', 'grasshopper', 'moth', 'fly', 'beetle', 'bug', 'cockroach',
     'bee', 'butterfly', 'caterpillar', 'ladybug', 'lightning_bug', 'mosquito', 'praying_mantis'
 ]
+
+pretrained_model = "ViT-B/32"  # Options: "ViT-B/32", 
