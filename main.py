@@ -230,12 +230,3 @@ plt.yticks(rotation=0)
 plt.tight_layout()
 plt.savefig("rdm_spearman_heatmap.png", dpi=300)
 plt.show()
-
-###### STEP 4 ######
-### COMPUTE AND SAVE RDMs ###
-#############################
-
-# Assuming `animal_df` and `region_electrode_map` are already defined
-rdms = compute_all_rdms(animal_df, region_electrode_map)
-# Save outputs (choose a relative path)
-save_rdms(rdms, "outputs/rdms")

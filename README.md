@@ -18,7 +18,3 @@ CONTENT:
 - Label each electrode response by its cortical region (V1, V4, IT).
 - Associate each stimulus image with object categories.
 - Save the final enriched dataset as a CSV file for further analysis.
-
-
-### RDM Outputs
-Precomputed Representational Dissimilarity Matrices (RDMs) are stored in `rdm_utils_output/`. To regenerate, see Step 4 in `main.py`.
