@@ -136,7 +136,7 @@ def process_monkey(monkey, regions, category_df):
 # Load category data only
 category_df = load_category_data()
 
-# Process both monkeys without memorability
+# Process both monkeys without CR
 for monkey, region_map in monkeys.items():
     process_monkey(monkey, region_map, category_df)
 

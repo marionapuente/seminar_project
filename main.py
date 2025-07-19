@@ -9,6 +9,7 @@ import seaborn as sns
 
 from config import data_base_path, monkey_id, project_base_path, excluded_classes
 from utils import compute_rdm
+from rdm_utils import compute_all_rdms, save_rdms
 
 ############### STEP 1 ################
 ### COMPUTE RDMs FROM MUA RESPONSES ###
@@ -229,3 +230,12 @@ plt.yticks(rotation=0)
 plt.tight_layout()
 plt.savefig("rdm_spearman_heatmap.png", dpi=300)
 plt.show()
+
+###### STEP 4 ######
+### COMPUTE AND SAVE RDMs ###
+#############################
+
+# Assuming `animal_df` and `region_electrode_map` are already defined
+rdms = compute_all_rdms(animal_df, region_electrode_map)
+# Save outputs (choose a relative path)
+save_rdms(rdms, "outputs/rdms")
