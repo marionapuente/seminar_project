@@ -1,6 +1,6 @@
 # CONFIGURATION FILE
 
-project_base_path = 'C:/Users/mario/git_projects/seminar_project/seminar_project'  # Update this path as needed
+project_base_path = 'C:/Users/mario/git_projects/seminar_project'  # Update this path as needed
 data_base_path = 'C:/Users/mario/OneDrive/Escritorio/NeuroData/Data analysis seminar'  # Update this path as needed
 image_path = 'C:/Users/mario/OneDrive/Escritorio/NeuroData/Data analysis seminar/images/images'  # Update this path as needed
 
@@ -16,3 +16,4 @@ excluded_classes = ['alligator', 'ant', 'antelope', 'barnacle', 'bear', 'bird', 
  'swan', 'tadpole', 'tick', 'toad', 'turkey', 'vulture', 'warthog', 'weasel', 'wolf', 'yak']
 
 pretrained_model = "ViT-B/32"  # Options: "ViT-B/32", "VGG16"
+metric = 'cosine'  # Options: 'euclidean', 'cosine'

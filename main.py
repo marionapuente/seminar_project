@@ -7,9 +7,8 @@ from scipy.stats import spearmanr
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from config import data_base_path, monkey_id, project_base_path, excluded_classes
+from config import data_base_path, monkey_id, project_base_path, excluded_classes, metric
 from utils import compute_rdm
-from rdm_utils import compute_all_rdms, save_rdms
 
 ############### STEP 1 ################
 ### COMPUTE RDMs FROM MUA RESPONSES ###
@@ -55,46 +54,46 @@ region_animal_vectors = {
 # RDM of all brain per category
 rdm_brain_category, rdm_vector_brain_category, labels_brain_category = compute_rdm(category_vectors.values,
                                                                                    labels=category_labels,
-                                                                                   metric='euclidean',
-                                                                                   save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_brain_category.png',
+                                                                                   metric=metric,
+                                                                                   save_path=f'{project_base_path}/RDMs/{monkey_id}_brain_category',
                                                                                    title="RDM - per category (all brain)")
 # RDM per region per category
 rdm_V1_category, rdm_vector_V1_category, labels_V1_category = compute_rdm(region_vectors['V1'].values,
                                                                              labels=category_labels,
-                                                                             metric='euclidean',
-                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_V1_category.png',
+                                                                             metric=metric,
+                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_V1_category',
                                                                              title="RDM - per category (V1)")
 rdm_V4_category, rdm_vector_V4_category, labels_V4_category = compute_rdm(region_vectors['V4'].values,
                                                                              labels=category_labels,
-                                                                             metric='euclidean',
-                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_V4_category.png',
+                                                                             metric=metric,
+                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_V4_category',
                                                                              title="RDM - per category (V4)")
 rdm_IT_category, rdm_vector_IT_category, labels_IT_category = compute_rdm(region_vectors['IT'].values,
                                                                              labels=category_labels,
-                                                                             metric='euclidean',
-                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_IT_category.png',
+                                                                             metric=metric,
+                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_IT_category',
                                                                              title="RDM - per category (IT)")
 # RDM of all brain per animal
 rdm_brain_animal, rdm_vector_brain_animal, labels_brain_animal = compute_rdm(animal_vectors.values,
                                                                                    labels=animal_labels,
-                                                                                   metric='euclidean',
-                                                                                   save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_brain_animal.png',
+                                                                                   metric=metric,
+                                                                                   save_path=f'{project_base_path}/RDMs/{monkey_id}_brain_animal',
                                                                                    title="RDM - per animal (all brain)")
 # RDM per region per animal
 rdm_V1_animal, rdm_vector_V1_animal, labels_V1_animal = compute_rdm(region_animal_vectors['V1'].values,
                                                                              labels=animal_labels,
-                                                                             metric='euclidean',
-                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_V1_animal.png',
+                                                                             metric=metric,
+                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_V1_animal',
                                                                              title="RDM - per animal (V1)")
 rdm_V4_animal, rdm_vector_V4_animal, labels_V4_animal = compute_rdm(region_animal_vectors['V4'].values,
                                                                              labels=animal_labels,
-                                                                             metric='euclidean',
-                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_V4_animal.png',
+                                                                             metric=metric,
+                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_V4_animal',
                                                                              title="RDM - per animal (V4)")
 rdm_IT_animal, rdm_vector_IT_animal, labels_IT_animal = compute_rdm(region_animal_vectors['IT'].values,
                                                                              labels=animal_labels,
-                                                                             metric='euclidean',
-                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_rdm_IT_animal.png',
+                                                                             metric=metric,
+                                                                             save_path=f'{project_base_path}/RDMs/{monkey_id}_IT_animal',
                                                                              title="RDM - per animal (IT)")
 
 ################# STEP 2 ##################
@@ -108,10 +107,10 @@ df2 = pd.read_csv(os.path.join(data_base_path, "datasets", "clip_embeddings_with
 
 # Add category labels
 category_df = pd.read_csv(os.path.join(data_base_path, "raw_datasets", "Concept_to_category_linking.csv"))
-category_df = category_df.drop(columns=[col for col in category_df.columns if col not in ['concept', 'category']])
+category_df = category_df.drop(columns=[col for col in category_df.columns if col not in ['concept', 'category_label']])
 category_df = category_df.rename(columns={'concept': 'label'})
-df2 = df2.drop(columns=['category_label'])
 df2 = df2.merge(category_df, on='label', how='left')
+df2 = df2.dropna(subset=['label', 'category_label'])
 
 # Prepare embeddings for RDM computation
 # RDM per category
@@ -130,14 +129,14 @@ animal_labels = animal_clip.index.values
 # RDM per category
 rdm_clip_category, rdm_vector_clip_category, labels_clip_category = compute_rdm(category_clip.values,
                                                                                    labels=category_labels,
-                                                                                   metric='cosine',
-                                                                                   save_path=f'{project_base_path}/RDMs/rdm_clip_category.png',
+                                                                                   metric=metric,
+                                                                                   save_path=f'{project_base_path}/RDMs/clip_category',
                                                                                    title="RDM - per category (CLIP-ViT)")
 # RDM per animal
 rdm_clip_animal, rdm_vector_clip_animal, labels_clip_animal = compute_rdm(animal_clip.values,
                                                                                    labels=animal_labels,
-                                                                                   metric='cosine',
-                                                                                   save_path=f'{project_base_path}/RDMs/rdm_clip_animal.png',
+                                                                                   metric=metric,
+                                                                                   save_path=f'{project_base_path}/RDMs/clip_animal',
                                                                                    title="RDM - per animal (CLIP-ViT)")
 
 ## VGG16 Embeddings
@@ -146,8 +145,8 @@ rdm_clip_animal, rdm_vector_clip_animal, labels_clip_animal = compute_rdm(animal
 df3 = pd.read_csv(os.path.join(data_base_path, "datasets", "vgg16_embeddings_with_labels.csv"))
 
 # Add category labels
-df3 = df3.drop(columns=['category_label'])
 df3 = df3.merge(category_df, on='label', how='left')
+df3 = df3.dropna(subset=['label', 'category_label'])
 
 # Prepare embeddings for RDM computation
 # RDM per category
@@ -166,14 +165,14 @@ animal_labels = animal_vgg.index.values
 # RDM per category
 rdm_vgg_category, rdm_vector_vgg_category, labels_vgg_category = compute_rdm(category_vgg.values,
                                                                                    labels=category_labels,
-                                                                                   metric='cosine',
-                                                                                   save_path=f'{project_base_path}/RDMs/rdm_vgg_category.png',
+                                                                                   metric=metric,
+                                                                                   save_path=f'{project_base_path}/RDMs/vgg_category',
                                                                                    title="RDM - per category (VGG16)")
 # RDM per animal
 rdm_vgg_animal, rdm_vector_vgg_animal, labels_vgg_animal = compute_rdm(animal_vgg.values,
                                                                                    labels=animal_labels,
-                                                                                   metric='cosine',
-                                                                                   save_path=f'{project_base_path}/RDMs/rdm_vgg_animal.png',
+                                                                                   metric=metric,
+                                                                                   save_path=f'{project_base_path}/RDMs/vgg_animal',
                                                                                    title="RDM - per animal (VGG16)")
 
 ###### STEP 3 ######
@@ -212,21 +211,24 @@ correlation_table = pd.DataFrame(
 
 # Display and save table
 
-correlation_table.to_csv("rdm_spearman_correlation_table.csv")
+os.makedirs("correlation_table", exist_ok=True)
+correlation_table.to_csv("correlation_table/rdm_spearman_correlation_table.csv")
+plt.savefig("correlation_table/rdm_spearman_heatmap.png", dpi=300)
 
 plt.figure(figsize=(8, 4))
 sns.heatmap(
-    correlation_table.applymap(lambda x: float(x.split('\n')[0])),  # use rho values for color
+    data=correlation_table.applymap(lambda x: float(str(x).split('\n')[0]) if isinstance(x, str) else x),  # type: ignore
     annot=correlation_table,
-    fmt='',
-    cmap='vlag',
+    fmt='',                    
+    cmap='Reds',
     cbar=True,
     linewidths=0.5,
     linecolor='gray',
     annot_kws={"size": 8}
 )
+
 plt.title("RDM Spearman Correlation\n(rho + p-values)", fontsize=12)
-plt.yticks(rotation=0)
-plt.tight_layout()
+#plt.yticks(rotation=0)
+#plt.tight_layout()
 plt.savefig("rdm_spearman_heatmap.png", dpi=300)
 plt.show()

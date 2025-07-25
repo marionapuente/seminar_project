@@ -12,15 +12,24 @@ import os
 
 def compute_rdm(vectors, labels=None, metric='euclidean', show_heatmap=True, save_path=None, title="RDM"):
     
-    # Compute RDM
-    dist_array = pdist(vectors, metric=metric)
-    dist_matrix = pd.DataFrame(squareform(dist_array), index=labels, columns=labels)
+    # Compute RDM depending on the metric
+    if metric == 'cosine':
+        dist_array = 1 - np.dot(vectors, vectors.T) / (
+            np.linalg.norm(vectors, axis=1, keepdims=True) *
+            np.linalg.norm(vectors, axis=1, keepdims=True).T
+        )
+        # Convert to condensed form for compatibility with squareform-like behavior
+        dist_matrix = pd.DataFrame(dist_array, index=labels, columns=labels)
+    elif metric == 'euclidean':
+        dist_array = pdist(vectors, metric=metric)
+        dist_matrix = pd.DataFrame(squareform(dist_array), index=labels, columns=labels)
+    
     rdm_vector = dist_matrix.where(np.triu(np.ones(dist_matrix.shape), k=1).astype(bool)).stack().values
 
     # Optional heatmap
     if show_heatmap or save_path:
         plt.figure(figsize=(10, 8))
-        sns.heatmap(dist_matrix, xticklabels=True, yticklabels=True, cmap="viridis", annot=False, square=True, cbar_kws={"shrink": 0.75})
+        sns.heatmap(dist_matrix, xticklabels=True, yticklabels=True, cmap="viridis", annot=False, square=True, vmin=0, vmax=2, cbar_kws={"shrink": 0.75})
         plt.title(title)
         fontsize = 6 if len(labels) > 25 else 10
         plt.xticks(fontsize=fontsize)
@@ -29,13 +38,16 @@ def compute_rdm(vectors, labels=None, metric='euclidean', show_heatmap=True, sav
 
         # Save if path is given
         if save_path:
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
-            plt.savefig(save_path, dpi=300)
-            print(f"Heatmap saved to {save_path}")
+            os.makedirs(save_path, exist_ok=True)
+            plt.savefig(os.path.join(save_path, "rdm.png"), dpi=300)
+            dist_matrix.to_csv(os.path.join(save_path, "matrix.csv"))
+            np.save(os.path.join(save_path, "vector.npy"), rdm_vector)
 
         if show_heatmap:
             plt.show()
         else:
             plt.close()
+
+        
 
     return dist_matrix, rdm_vector, labels
