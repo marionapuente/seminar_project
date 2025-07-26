@@ -16,4 +16,4 @@ excluded_classes = ['alligator', 'ant', 'antelope', 'barnacle', 'bear', 'bird', 
  'swan', 'tadpole', 'tick', 'toad', 'turkey', 'vulture', 'warthog', 'weasel', 'wolf', 'yak']
 
 pretrained_model = "ViT-B/32"  # Options: "ViT-B/32", "VGG16"
-metric = 'cosine'  # Options: 'euclidean', 'cosine'
+metric = 'cosine'  # Options: 'euclidean', 'cosine', 'correlation'

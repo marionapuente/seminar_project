@@ -23,13 +23,16 @@ def compute_rdm(vectors, labels=None, metric='euclidean', show_heatmap=True, sav
     elif metric == 'euclidean':
         dist_array = pdist(vectors, metric=metric)
         dist_matrix = pd.DataFrame(squareform(dist_array), index=labels, columns=labels)
+    elif metric == 'correlation':
+        dist_array = pdist(vectors, metric='correlation')  # returns 1 - P correlation
+        dist_matrix = pd.DataFrame(squareform(dist_array), index=labels, columns=labels)
     
     rdm_vector = dist_matrix.where(np.triu(np.ones(dist_matrix.shape), k=1).astype(bool)).stack().values
 
     # Optional heatmap
     if show_heatmap or save_path:
         plt.figure(figsize=(10, 8))
-        sns.heatmap(dist_matrix, xticklabels=True, yticklabels=True, cmap="viridis", annot=False, square=True, vmin=0, vmax=2, cbar_kws={"shrink": 0.75})
+        sns.heatmap(dist_matrix, xticklabels=True, yticklabels=True, cmap="viridis", annot=False, square=True, cbar_kws={"shrink": 0.75})
         plt.title(title)
         fontsize = 6 if len(labels) > 25 else 10
         plt.xticks(fontsize=fontsize)
@@ -47,7 +50,5 @@ def compute_rdm(vectors, labels=None, metric='euclidean', show_heatmap=True, sav
             plt.show()
         else:
             plt.close()
-
-        
 
     return dist_matrix, rdm_vector, labels
