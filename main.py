@@ -16,8 +16,7 @@ from utils import compute_rdm
 #######################################
 
 # Load MUA data
-csv_path = f'{data_base_path}/datasets/{monkey_id}_MUA_responses.csv'
-df1 = pd.read_csv(csv_path)
+df1 = pd.read_csv(f'{data_base_path}/datasets/{monkey_id}_MUA_responses.csv')
 df1 = df1[df1['category_label'].notna()].reset_index(drop=True)  # Keep only rows with non-missing category label
 
 # Extract electrode columns and electrode columns per region
@@ -53,49 +52,49 @@ region_animal_vectors = {
 
 # Compute, display and save RDMs
 # RDM of all brain per category
-rdm_brain_category, rdm_vector_brain_category, labels_brain_category = compute_rdm(category_vectors.values,
-                                                                                   labels=category_labels,
-                                                                                   metric=metric,
-                                                                                   save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_brain_category"),
-                                                                                   title="RDM - per category (all brain)")
+rdm_vector_brain_category = compute_rdm(category_vectors.values,
+                                        labels=category_labels,
+                                        metric=metric,
+                                        save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_brain_category"),
+                                        title="RDM - per category (all brain)")
 # RDM per region per category
-rdm_V1_category, rdm_vector_V1_category, labels_V1_category = compute_rdm(region_vectors['V1'].values,
-                                                                             labels=category_labels,
-                                                                             metric=metric,
-                                                                             save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V1_category"),
-                                                                             title="RDM - per category (V1)")
-rdm_V4_category, rdm_vector_V4_category, labels_V4_category = compute_rdm(region_vectors['V4'].values,
-                                                                             labels=category_labels,
-                                                                             metric=metric,
-                                                                             save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V4_category"),
-                                                                             title="RDM - per category (V4)")
-rdm_IT_category, rdm_vector_IT_category, labels_IT_category = compute_rdm(region_vectors['IT'].values,
-                                                                             labels=category_labels,
-                                                                             metric=metric,
-                                                                             save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_IT_category"),
-                                                                             title="RDM - per category (IT)")
+rdm_vector_V1_category = compute_rdm(region_vectors['V1'].values,
+                                     labels=category_labels,
+                                     metric=metric,
+                                     save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V1_category"),
+                                     title="RDM - per category (V1)")
+rdm_vector_V4_category = compute_rdm(region_vectors['V4'].values,
+                                     labels=category_labels,
+                                     metric=metric,
+                                     save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V4_category"),
+                                     title="RDM - per category (V4)")
+rdm_vector_IT_category = compute_rdm(region_vectors['IT'].values,
+                                     labels=category_labels,
+                                     metric=metric,
+                                     save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_IT_category"),
+                                     title="RDM - per category (IT)")
 # RDM of all brain per animal
-rdm_brain_animal, rdm_vector_brain_animal, labels_brain_animal = compute_rdm(animal_vectors.values,
-                                                                                   labels=animal_labels,
-                                                                                   metric=metric,
-                                                                                   save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_brain_animal"),
-                                                                                   title="RDM - per animal (all brain)")
+rdm_vector_brain_animal = compute_rdm(animal_vectors.values,
+                                      labels=animal_labels,
+                                      metric=metric,
+                                      save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_brain_animal"),
+                                      title="RDM - per animal (all brain)")
 # RDM per region per animal
-rdm_V1_animal, rdm_vector_V1_animal, labels_V1_animal = compute_rdm(region_animal_vectors['V1'].values,
-                                                                             labels=animal_labels,
-                                                                             metric=metric,
-                                                                             save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V1_animal"),
-                                                                             title="RDM - per animal (V1)")
-rdm_V4_animal, rdm_vector_V4_animal, labels_V4_animal = compute_rdm(region_animal_vectors['V4'].values,
-                                                                             labels=animal_labels,
-                                                                             metric=metric,
-                                                                             save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V4_animal"),
-                                                                             title="RDM - per animal (V4)")
-rdm_IT_animal, rdm_vector_IT_animal, labels_IT_animal = compute_rdm(region_animal_vectors['IT'].values,
-                                                                             labels=animal_labels,
-                                                                             metric=metric,
-                                                                             save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_IT_animal"),
-                                                                             title="RDM - per animal (IT)")
+rdm_vector_V1_animal = compute_rdm(region_animal_vectors['V1'].values,
+                                   labels=animal_labels,
+                                   metric=metric,
+                                   save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V1_animal"),
+                                   title="RDM - per animal (V1)")
+rdm_vector_V4_animal = compute_rdm(region_animal_vectors['V4'].values,
+                                   labels=animal_labels,
+                                   metric=metric,
+                                   save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_V4_animal"),
+                                   title="RDM - per animal (V4)")
+rdm_vector_IT_animal = compute_rdm(region_animal_vectors['IT'].values,
+                                   labels=animal_labels,
+                                   metric=metric,
+                                   save_path=os.path.join(project_base_path, "RDMs", metric, f"{monkey_id}_IT_animal"),
+                                   title="RDM - per animal (IT)")
 
 ################# STEP 2 ##################
 ### COMPUTE RDMs FROM PRETRAINED MODELS ###
@@ -126,17 +125,17 @@ animal_labels = animal_clip.index.values
 
 # Compute, display and save RDMs
 # RDM per category
-rdm_clip_category, rdm_vector_clip_category, labels_clip_category = compute_rdm(category_clip.values,
-                                                                                   labels=category_labels,
-                                                                                   metric=metric,
-                                                                                   save_path=os.path.join(project_base_path, "RDMs", metric, "clip_category"),
-                                                                                   title="RDM - per category (CLIP-ViT)")
+rdm_vector_clip_category = compute_rdm(category_clip.values,
+                                       labels=category_labels,
+                                       metric=metric,
+                                       save_path=os.path.join(project_base_path, "RDMs", metric, "clip_category"),
+                                       title="RDM - per category (CLIP-ViT)")
 # RDM per animal
-rdm_clip_animal, rdm_vector_clip_animal, labels_clip_animal = compute_rdm(animal_clip.values,
-                                                                                   labels=animal_labels,
-                                                                                   metric=metric,
-                                                                                   save_path=os.path.join(project_base_path, "RDMs", metric, "clip_animal"),
-                                                                                   title="RDM - per animal (CLIP-ViT)")
+rdm_vector_clip_animal = compute_rdm(animal_clip.values,
+                                     labels=animal_labels,
+                                     metric=metric,
+                                     save_path=os.path.join(project_base_path, "RDMs", metric, "clip_animal"),
+                                     title="RDM - per animal (CLIP-ViT)")
 
 ## VGG16 Embeddings
 
@@ -160,17 +159,17 @@ animal_labels = animal_vgg.index.values
 
 # Compute, display and save RDMs
 # RDM per category
-rdm_vgg_category, rdm_vector_vgg_category, labels_vgg_category = compute_rdm(category_vgg.values,
-                                                                                   labels=category_labels,
-                                                                                   metric=metric,
-                                                                                   save_path=os.path.join(project_base_path, "RDMs", metric, "vgg_category"),
-                                                                                   title="RDM - per category (VGG16)")
+rdm_vector_vgg_category = compute_rdm(category_vgg.values,
+                                      labels=category_labels,
+                                      metric=metric,
+                                      save_path=os.path.join(project_base_path, "RDMs", metric, "vgg_category"),
+                                      title="RDM - per category (VGG16)")
 # RDM per animal
-rdm_vgg_animal, rdm_vector_vgg_animal, labels_vgg_animal = compute_rdm(animal_vgg.values,
-                                                                                   labels=animal_labels,
-                                                                                   metric=metric,
-                                                                                   save_path=os.path.join(project_base_path, "RDMs", metric, "vgg_animal"),
-                                                                                   title="RDM - per animal (VGG16)")
+rdm_vector_vgg_animal = compute_rdm(animal_vgg.values,
+                                    labels=animal_labels,
+                                    metric=metric,
+                                    save_path=os.path.join(project_base_path, "RDMs", metric, "vgg_animal"),
+                                    title="RDM - per animal (VGG16)")
 
 ###### STEP 3 ######
 ### COMPARE RDMs ###

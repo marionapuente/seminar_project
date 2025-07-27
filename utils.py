@@ -51,4 +51,4 @@ def compute_rdm(vectors, labels=None, metric='euclidean', show_heatmap=True, sav
         else:
             plt.close()
 
-    return dist_matrix, rdm_vector, labels
+    return rdm_vector
