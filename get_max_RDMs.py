@@ -96,8 +96,16 @@ tbl = ax.table(cellText=max_summary.to_numpy().tolist(),
 tbl.auto_set_font_size(False)
 tbl.set_fontsize(10)
 tbl.scale(0.9, 2.7)
-for key, cell in tbl.get_celld().items():
-    if key[0] == 0:
+for (row, col), cell in tbl.get_celld().items():
+    if row == 0:
+        # Bold header
         cell.get_text().set_fontweight('bold')
+    else:
+        # Color alternate rows
+        if (row % 2) == 0:
+            cell.set_facecolor("#fff3e0")
+        else:
+            cell.set_facecolor("#e3f2fd")
+
 plt.savefig("tables/summary_table.png", dpi=300, bbox_inches='tight')  # Save
 plt.show()
