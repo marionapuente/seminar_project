@@ -2,12 +2,13 @@
 
 # Import packages
 import pandas as pd
+import random
 import os
 from scipy.stats import spearmanr
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from config import data_base_path, monkey_id, project_base_path, excluded_classes, metric
+from config import data_base_path, monkey_id, project_base_path,  metric
 from utils import compute_rdm
 
 ############### STEP 1 ################
@@ -36,10 +37,10 @@ region_vectors = {
     'IT': df1.groupby('category_label')[IT_electrode_cols].mean()
 }
 # RDM of all brain per animal
-animal_df1 = df1[
-    (df1['category_label'] == 'animal') &
-    (~df1['Class'].isin(excluded_classes))
-].reset_index(drop=True)
+animal_df1 = df1[df1['category_label'] == 'animal'].reset_index(drop=True)
+random.seed(42)
+animals_to_keep = random.sample(animal_df1['Class'].unique().tolist(), 23)
+animal_df1 = animal_df1[animal_df1['Class'].isin(animals_to_keep)]
 animal_vectors = animal_df1.groupby('Class')[electrode_cols].mean()
 animal_labels = animal_vectors.index.values
 
@@ -118,10 +119,8 @@ clip_cols = df2.select_dtypes(include='number').columns
 category_clip = df2.groupby('category_label')[clip_cols].mean()
 category_labels = category_clip.index.values
 # RDM per animal
-animal_df2 = df2[
-    (df2['category_label'] == 'animal') &
-    (~df2['label'].isin(excluded_classes))
-].reset_index(drop=True)
+animal_df2 = df2[df2['category_label'] == 'animal'].reset_index(drop=True)
+animal_df2 = animal_df2[animal_df2['label'].isin(animals_to_keep)]
 animal_clip = animal_df2.groupby('label')[clip_cols].mean()
 animal_labels = animal_clip.index.values
 
@@ -154,10 +153,8 @@ vgg_cols = df3.select_dtypes(include='number').columns
 category_vgg = df3.groupby('category_label')[vgg_cols].mean()
 category_labels = category_vgg.index.values
 # RDM per animal
-animal_df3 = df3[
-    (df3['category_label'] == 'animal') &
-    (~df3['label'].isin(excluded_classes))
-].reset_index(drop=True)
+animal_df3 = df3[df3['category_label'] == 'animal'].reset_index(drop=True)
+animal_df3 = animal_df3[animal_df3['label'].isin(animals_to_keep)]
 animal_vgg = animal_df3.groupby('label')[vgg_cols].mean()
 animal_labels = animal_vgg.index.values
 
@@ -209,18 +206,33 @@ correlation_table = pd.DataFrame(
     columns=['MUA brain', 'MUA V1', 'MUA V4', 'MUA IT']
 )
 
+# Add row and column averages
+
+# Extract rho values only
+rho_values = correlation_table.map(lambda x: float(x.split('\n')[0]))
+# Compute means
+row_means = rho_values.mean(axis=1).round(2)
+col_means = rho_values.mean(axis=0).round(2)
+overall_mean = rho_values.values.mean().round(2)
+# Format means to match table format
+row_means_str = row_means.apply(lambda x: f"{x:.2f}")
+col_means_str = col_means.apply(lambda x: f"{x:.2f}")
+# Append row and column means
+correlation_table.loc['average'] = col_means_str
+correlation_table['average'] = list(row_means_str) + [f"{overall_mean:.2f}"]
+
 # Display and save table
 
 os.makedirs(f"correlation_table/{metric}", exist_ok=True)
 correlation_table.to_csv(f"correlation_table/{metric}/rdm_spearman_table.csv")
 
 plt.figure(figsize=(8, 4))
-sns.heatmap(
+ax = sns.heatmap(
     data=correlation_table.map(lambda x: float(str(x).split('\n')[0]) if isinstance(x, str) else x),
     annot=correlation_table,
-    fmt='',                    
+    fmt='',
     cmap='Reds',
-    vmin=0,  # there are no negative correlations
+    vmin=0,
     vmax=1,
     cbar=True,
     linewidths=0.5,
@@ -228,6 +240,13 @@ sns.heatmap(
     annot_kws={"size": 8}
 )
 
-plt.title(f"Spearman Correlation of RDM computed using {metric}", fontsize=12)
+n_rows, n_cols = correlation_table.shape  # Get the position of the "average" row/column
+
+# Thicker black lines
+ax.hlines(n_rows - 1, *ax.get_xlim(), colors='black', linewidth=1.5)
+ax.vlines(n_cols - 1, *ax.get_ylim(), colors='black', linewidth=1.5)
+
+plt.title(f"Spearman Correlation of RDM computed using '{metric}'", fontsize=12)
+plt.tight_layout()
 plt.savefig(f"correlation_table/{metric}/rdm_spearman_heatmap.png", dpi=300)
 plt.show()
