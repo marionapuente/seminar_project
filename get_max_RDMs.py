@@ -78,34 +78,86 @@ def get_max(RDM_matrix):
 
     return max_val, max_avg_row_index
 
-max_table = []
-for name, rdm in rdm_matrices.items():
-    max_val, max_avg_row_index = get_max(rdm)
-    max_table.append([name, max_val, max_avg_row_index])
+# Create a nested dictionary and collect results
 
-max_summary = pd.DataFrame(max_table, columns=["RDM name", "RDM maximum value", "Most dissimilar category/animal"])  # For better display
-max_summary[["RDM maximum value"]] = max_summary[["RDM maximum value"]].round(3)  # Round values
+grouped_results = {}  # type: ignore
+
+for name, rdm in rdm_matrices.items():
+    max_val, max_label = get_max(rdm)
+
+    for metric in ['cosine', 'corr', 'eucl']:
+        if name.startswith(metric):
+            base_name = name[len(metric)+1:]  # Skip the metric and underscore
+            break
+
+    if base_name not in grouped_results:
+        grouped_results[base_name] = {}
+
+    grouped_results[base_name][f"{metric}_val"] = round(max_val, 3)
+    grouped_results[base_name][f"{metric}_label"] = max_label
+
+# Build DataFrame from the nested dictionary
+max_summary = pd.DataFrame.from_dict(grouped_results, orient='index')  # type: ignore
+max_summary.index.name = 'RDM name'
+max_summary.reset_index(inplace=True)
+
+# Ensure consistent column ordering
+desired_cols = ['RDM name',
+                'cosine_val', 'corr_val', 'eucl_val',
+                'cosine_label', 'corr_label', 'eucl_label']
+max_summary = max_summary[desired_cols]
+
+# Add hierarchical column names
+new_columns = [
+    ('', 'RDM name'),
+    ('RDM', 'Cosine'),
+    ('maximum', 'Correlation'),
+    ('value', 'Euclidean'),
+    ('Most', 'Cosine'),
+    ('dissimilar', 'Correlation'),
+    ('label', 'Euclidean')
+]
+
+max_summary.columns = pd.MultiIndex.from_tuples(new_columns)
 
 # Display and save table
-fig, ax = plt.subplots(figsize=(12, len(max_summary)*0.5))
+
+top_headers = [col[0] for col in max_summary.columns]
+sub_headers = [col[1] for col in max_summary.columns]
+header_rows = [top_headers, sub_headers]
+table_data = header_rows + max_summary.to_numpy().tolist()
+
+fig, ax = plt.subplots(figsize=(12, (len(max_summary)+2) * 0.5))
 ax.axis('off')
-tbl = ax.table(cellText=max_summary.to_numpy().tolist(),
-               colLabels=max_summary.columns.tolist(),
+
+tbl = ax.table(cellText=table_data,
                cellLoc='center',
                loc='center')
 tbl.auto_set_font_size(False)
 tbl.set_fontsize(10)
 tbl.scale(0.9, 2.7)
+
 for (row, col), cell in tbl.get_celld().items():
-    if row == 0:
-        # Bold header
+    keep_black_lines = [0, 3, 6]
+    if row == 0:  # First header row
+        cell.get_text().set_fontweight('bold')
+        cell.set_edgecolor('white')
+        if col == 1:
+            cell.get_text().set_horizontalalignment('right')
+        elif col == 3:
+            cell.get_text().set_horizontalalignment('left')
+        if col == 4:
+            cell.get_text().set_horizontalalignment('right')
+        elif col == 6:
+            cell.get_text().set_horizontalalignment('left')
+    elif row == 1:
         cell.get_text().set_fontweight('bold')
     else:
-        # Color alternate rows
+        # Alternate row colors
         if (row % 2) == 0:
             cell.set_facecolor("#fff3e0")
         else:
             cell.set_facecolor("#e3f2fd")
 
-plt.savefig("tables/summary_table.png", dpi=300, bbox_inches='tight')  # Save
+plt.savefig("tables/summary_table.png", dpi=300, bbox_inches='tight')
 plt.show()
