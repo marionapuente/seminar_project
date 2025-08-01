@@ -138,7 +138,6 @@ tbl.set_fontsize(10)
 tbl.scale(0.9, 2.7)
 
 for (row, col), cell in tbl.get_celld().items():
-    keep_black_lines = [0, 3, 6]
     if row == 0:  # First header row
         cell.get_text().set_fontweight('bold')
         cell.set_edgecolor('white')
